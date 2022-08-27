@@ -1,0 +1,28 @@
+spring:
+  kafka:
+    bootstrap-servers: 42.192.41.175:9092, 42.192.41.175:9093, 42.192.41.175:9094
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      ## 缓冲区的大小 - 一般而言，缓冲区太大意味着会等待多个消息一起发，这样会有延迟
+      batch-size: 16384 # 16*1024
+      ## 消息发送失败的时候，重试的次数. 当为0的时候意味着不可能有消息重复
+      retries: 0
+      ## 当client发送数据的时候，一般要经过缓冲，而不是一下发给服务端. 大小的设置要取决于实际情况
+      ## 比如每秒有多少消费，估算一下需要的容量. 基本单位是字节。1K = 1024字节，1M = 1024K
+      buffer-memory: 33554432 # 32*1024*1024
+      ## -1 意味着等待所有的follower确认完毕，才能发送吓一跳消息
+      acks: -1
+    consumer:
+      ## 消费端要告诉kafka当前消费的进度, 即使消费端告诉了一个假的消费进度给kafka。从这个角度来说，体现了职责分离的思维
+      ## 可以理解为一个员工定期和老板汇报项目的进度，当然员工可以撒谎
+      enable-auto-commit: true
+      ## 单位是毫秒
+      auto-commit-interval: 5000
+      ## 消费者要属于一个群组
+      group-id: product
+      ## 当kafka无法得到消费者的消费进度时候，应该怎么办？earliest: 从最小的offset开发消费，latest: 从最大的offset开始消费
+      ## none: 抛出异常
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
