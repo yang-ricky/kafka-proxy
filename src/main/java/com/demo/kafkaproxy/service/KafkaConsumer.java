@@ -18,6 +18,7 @@ public class KafkaConsumer {
                 .ofNullable(record.value())
                 .ifPresent(message -> {
                     logger.info(message.toString());
+                    System.out.println("consume message successfully");
                 });
     }
 }
